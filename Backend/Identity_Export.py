@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-import oci
+#import oci
 import json
 import os
 
@@ -11,7 +11,7 @@ tfstate_file_path= "terraform.tfstate"
 #tfstate_file_path = os.path.abspath(os.path.join(repertoire_courant, tfstate_file))
 
 
-config = oci.config.from_file()
+#config = oci.config.from_file()
 
 with open(tfstate_file_path, "r") as file:
     tfstate_data = json.load(file)
