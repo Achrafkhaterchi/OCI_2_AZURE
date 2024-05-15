@@ -6,17 +6,15 @@ import os
 
 #repertoire_courant = os.getcwd()
 
-tfstate_file_path= "terraform.tfstate"
-
-#tfstate_file_path = os.path.abspath(os.path.join(repertoire_courant, tfstate_file))
-
+parent_dir = os.path.dirname(os.path.abspath(__file__))
+tfstate_file_path = os.path.join(parent_dir, 'terraform.tfstate')
+excel_file_path = os.path.join(parent_dir, 'OCI.xlsx')
 
 #config = oci.config.from_file()
 
 with open(tfstate_file_path, "r") as file:
     tfstate_data = json.load(file)
 
-excel_file_path = "OCI.xlsx"
 wb = load_workbook(excel_file_path)
 
 compartments_sheet = wb["Compartments"]
