@@ -6,9 +6,9 @@ pipeline {
             steps {
                 git branch: 'main', url:'https://github.com/Achrafkhaterchi/OCI_2_AZURE.git'
 
-                sh 'python3 Export_Identity.py OCI.xlsx terraform.tfstate'
+                sh 'python3 Backend/Export_Identity.py Backend/OCI.xlsx Backend/terraform.tfstate'
 
-                archiveArtifacts 'terraform.tfstate'
+                archiveArtifacts 'Backend/OCI.xlsx'
             }
         }
     }
