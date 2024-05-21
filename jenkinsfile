@@ -11,11 +11,55 @@ pipeline {
                 archiveArtifacts 'Backend/OCI.xlsx'
             }
         }
+
+        stage('TFVARS') {
+            steps {
+                stash(name: 'ociArtifact', includes: 'Backend/OCI.xlsx')
+                script {
+                    unstash 'ociArtifact'
+
+                    sh 'python3 Backend/Identity_Create.py IAM/template/IAM.j2 Backend/OCI.xlsx'
+                }
+                archiveArtifacts 'IAM/variables.tfvars'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                dir('IAM/') {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                dir('IAM/'){
+                    sh 'terraform plan -var-file=variables.tfvars -out tfplan'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('IAM/'){
+                sh 'terraform apply -auto-approve tfplan'
+                }
+            }
+        }
+
+        /*stage('Terraform Destroy') {
+            steps {
+                dir('IAM/'){
+                sh 'terraform destroy -auto-approve -var-file=variables.tfvars'
+                }
+            }
+        }*/
     }
 
     post {
         success {
-            echo 'Success !'
+            echo 'IAM has successfully transfered from OCI to Azure !'
         }
     }
 }

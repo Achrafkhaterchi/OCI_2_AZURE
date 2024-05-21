@@ -4,8 +4,6 @@ import json
 import os
 
 
-#repertoire_courant = os.getcwd()
-
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 tfstate_file_path = os.path.join(parent_dir, 'terraform.tfstate')
 excel_file_path = os.path.join(parent_dir, 'OCI.xlsx')
@@ -21,6 +19,9 @@ compartments_sheet = wb["Compartments"]
 groups_sheet = wb["Groups"]
 policies_sheet = wb["Policies"]
 
+U_id = "a4fc18e6-5665-4088-b457-4f7dc1c1f28b"
+
+
 region_ = [
     instance["attributes"]["reporting_region"] 
     for resource in tfstate_data["resources"] 
@@ -29,7 +30,13 @@ region_ = [
     for instance in resource.get("instances", []) 
     if "attributes" in instance and "reporting_region" in instance["attributes"]
 ]
-region = ', '.join(region_)
+
+region_map = {
+    "eu-paris-1": "eastus"
+}
+
+region = ', '.join(region_map.get(r, r) for r in region_)
+
 
 compartments_names = [value["name"] for value in tfstate_data["outputs"]["compartments"]["value"].values()]
 compartments_descriptions= [value["description"] for value in tfstate_data["outputs"]["lz_compartments"]["value"]["compartments"].values()]
@@ -61,7 +68,7 @@ groups_description = [
 
 
 for name, description in zip(groups_name, groups_description):
-    groups_sheet.append([region, name, description])
+    groups_sheet.append([region, name, description, U_id])
 
 
 policy_name = [
